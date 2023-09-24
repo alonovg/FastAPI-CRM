@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
+<title>Создание новой заявки - CRM</title>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+{% endblock %}
+
+{% block home_section %}
+<section class="home-section">
+    <div class="home-content">
+        <i class='bx bx-menu'></i>
+        <span class="text">Заявки</span>
+    </div>
+    <div class="container mt-5">
+        <h2>Создание новой заявки № {{new_order_num}}</h2>
+        <!--        <form action="/orders/new_order/" method="post" id="order-form">-->
+        <form action="/orders/add/new_order" method="post">
+            <table class="table">
+                <thread>
+                    <tr>
+                        <th>Имя заказа</th>
+                        <th>Клиент</th>
+                        <th>Отметка оплаты нам</th>
+                        <th>ПС - Прием</th>
+                        <th>Сумма получения</th>
+                        <th>Статус заявки</th>
+                    </tr>
+                </thread>
+
+                <tbody id="mainOrderTable">
+                <!-- Здесь будут добавляться строки с данными о заявке -->
+                <tr>
+                    <td>
+                        <input type="text" class="form-control" name="order_name">
+                    </td>
+                    <td>
+                        <select class="form-control" name="order_client">
+                            <option value=""></option>
+                            {% for client in clients %}
+                            <option value="{{client.id}}">{{client.username}}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td>
+                        <select class="form-control" name="order_get_pay">
+                            <option value="true">Да</option>
+                            <option value="false">Нет</option>
+                        </select>
+                    </td>
+                    <td>
+                        <select class="form-control" name="order_pay_method">
+                            <option value=""></option>
+                            {% for paymethod in paysmethods %}
+                            <option value="{{paymethod.id}}">{{paymethod.name}}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td><input type="text" class="form-control" name="order_sum"></td>
+                    <td><select class="form-control" name="order_status">
+                        {% for status in statuses %}
+                        <option value="{{status.id}}">{{status.name}}</option>
+                        {% endfor %}
+                    </select></td>
+                </tr>
+                </tbody>
+
+            </table>
+            <button type="submit" class="btn btn-success mt-3">Создать заявку</button>
+            <!--            </form>-->
+        </form>
+    </div>
+</section>
+{% endblock %}

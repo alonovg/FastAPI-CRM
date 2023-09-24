@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block head %}
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
+    <title>Список заявок - CRM</title>
+{% endblock %}
+
+{% block home_section %}
+<section class="home-section">
+    <div class="home-content">
+        <i class='bx bx-menu'></i>
+        <span class="text">Заявки</span>
+    </div>
+    <div class="container-fluid">
+        <h1 class="mt-3">Список заявок</h1>
+        <a href="/pages/create_order" class="btn btn-success mt-3">Создать заявку</a>
+        <table class="table table-striped mt-3">
+            <thead>
+            <tr>
+                <th scope="col">Номер заказа</th>
+                <th scope="col">Имя заказа</th>
+<!--                <th scope="col">Создатель заказа</th>-->
+                <th scope="col">Количество исполнителей</th>
+                <th scope="col">Дата заказа</th>
+                <th scope="col">Дата завершения заказа</th>
+                <th scope="col">Покупатель</th>
+                <th scope="col">Отметка оплаты</th>
+                <th scope="col">ПС Прием</th>
+                <th scope="col">Сумма заявки</th>
+                <th scope="col">Статус заявки</th>
+                <th scope="col">Прибыль заявки</th>
+                <th scope="col">Удалить</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for order in orders %}
+            <tr>
+                <td><a href="/pages/orders/{{order.order_num}}">{{order.order_num}}</a></td>
+                <td>{{order.order_name}}</td>
+<!--                <td>{{order.user.name}}</td>-->
+                <td>{{ executors[order.id] }}</td>
+                <td>{{order.order_date_create}}</td>
+                <td>{{order.order_date_close}}</td>
+                <td><a href="/pages/clients/{{order.client.id}}">{{order.client.username}}</a></td>
+                <td>{{order.order_get_pay}}</td>
+                <td>{{order.pays.name}}</td>
+                <td>{{order.order_sum}}</td>
+                <td>{{order.status.name}}</td>
+                <td>{{order.order_profit}}</td>
+                <td>
+                    <form action="/orders/del_order" method="post">
+                        <input type="hidden" name="order_id" value="{{ order.id }}">
+                        <input type="hidden" name="order_num" value="{{ order.order_num }}">
+                        <button type="submit" class="btn btn-danger">Удалить</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+            <!-- Дополнительные строки с данными заявок -->
+            </tbody>
+        </table>
+    </div>
+
+</section>
+{% endblock %}
+

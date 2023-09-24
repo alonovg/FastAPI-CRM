@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+<head>
+    {% block head %}
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
+    <title>Клиенты - CRM</title>
+    {% endblock %}
+{% block home_section %}
+<section class="home-section">
+    <div class="home-content">
+        <i class='bx bx-menu'></i>
+        <span class="text">Заявки</span>
+    </div>
+    <div class="container-fluid">
+        <h1 class="mt-3">Список клиентов</h1>
+        <a class="btn btn-success mt-3" data-toggle="modal" data-target="#addClientModal">Добавить клиента</a>
+        <table class="table table-striped mt-3">
+            <thead>
+            <tr>
+                <th scope="col">ID Клиента</th>
+                <th scope="col">Имя Клиента</th>
+                <th scope="col">Общая сумма оплат клиента</th>
+                <th scope="col">Принесенная прибыль от клиента</th>
+                <th scope="col">Изменить Данные Клиента</th>
+                <th scope="col">Удаление Клиента</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for client, client_sum, client_profit in clients_data %}
+            <tr>
+                <td><a href="clients/{{client.id}}">{{client.id}}</a></td>
+                <td class="client-username">{{client.username}}</td>
+                <td class="client-username">{{client_sum["result_sum"]}}</td>
+                <td class="client-username">{{client_profit["profit"]}}</td>
+                <td>
+                    <form action="/clients/update_client" method="post">
+                        <input type="hidden" name="client_id" value="{{ client.id }}">
+                        <input type="text" name="new_username" value="{{ client.username }}">
+                        <button type="submit" class="btn btn-success">Сохранить</button>
+                    </form>
+                </td>
+                <td>
+                    <form action="/clients/del_client" method="post">
+                        <input type="hidden" name="client_id" value="{{ client.id }}">
+                        <button type="submit" class="btn btn-danger">Удалить</button>
+                    </form>
+                </td>
+            </tr>
+            <!-- Дополнительные строки с данными заявок -->
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</section>
+
+<!--Modal Window for add new client-->
+<div class="modal fade" id="addClientModal" tabindex="-1"
+     aria-hidden="true" aria-labelledby="addClientModalLabel">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addClientModalLabel">Добавить нового клиента</h5>
+                <button class="btn-close" data-dismiss="modal" aria-label="close">Закрыть</button>
+            </div>
+            <form method="post" action="/clients/add_client">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="mb-3">
+                                <label class="form-label">Username клиента:</label>
+                                <input type="text" class="form-control" placeholder="Введите username клиента"
+                                       name="username">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-dismiss="modal">Закрыть</button>
+                    <button class="btn btn-secondary" type="submit">Сохранить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!--Modal Window for add new client-->
+{% endblock %}

@@ -1,0 +1,387 @@
+{% extends "base.html" %}
+
+{% block head %}
+<link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+      integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+<title>Детали по заявке - CRM</title>
+{% endblock %}
+
+{% block home_section %}
+<section class="home-section">
+    <div class="home-content">
+        <i class='bx bx-menu'></i>
+        <span class="text">Заявки</span>
+    </div>
+    {% for order in order_data %}
+    <div class="container-fluid">
+
+        <div class="container">
+            <!-- Title -->
+            <div class="d-flex justify-content-between align-items-lg-center py-3 flex-column flex-lg-row">
+                <h2 class="h5 mb-3 mb-lg-0"><a href="../../pages/admin/customers.html" class="text-muted"><i
+                        class="bi bi-arrow-left-square me-2"></i></a>Просмотр и изменение заявки № {{order.order_num}}
+                </h2>
+                <div class="hstack gap-3">
+                    <button class="btn btn-light btn-sm btn-icon-text"><i class="bi bi-x"></i> <span
+                            class="text">Cancel</span></button>
+                    <button class="btn btn-primary btn-sm btn-icon-text"><i class="bi bi-save"></i> <span class="text">Save</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Main content -->
+            <div class="row">
+                <!-- Left side -->
+                <div class="col-lg-8">
+                    <!-- Basic information -->
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <div class="mb-3 d-flex">
+                                <h3 class="h6 mb-4">Информация по заявке</h3>
+                                <button type="button" class="btn btn-warning ml-5" id="updateOrderBtn">Изменить</button>
+                                <button type="button" class="btn btn-success ml-5" id="sendUpdateOrderBtn">Сохранить
+                                </button>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Описание заявки</label>
+                                <input type="text" id="orderNameInput" class="form-control"
+                                       value="{{order.order_name}}">
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Клиент</label>
+                                        <select class="form-select" disabled>
+                                            <option value="{{order.client.id}}">{{order.client.username}}</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Сумма оплаты</label>
+                                        <input type="text" id="orderSumInput" class="form-control"
+                                               value="{{order.order_sum}}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">ПС - Прием</label>
+                                        <select id="orderPaysSelect" class="form-select">
+                                            <option value="{{order.pays.id}}">{{order.pays.name}}</option>
+                                            {% for paymethod in paysmethods %}
+                                            <option value="{{paymethod.id}}">{{paymethod.name}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <label class="form-label">Профит</label>
+                                        <input type="text" class="form-control" value="{{order.order_profit}} ₽."
+                                               disabled>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Address -->
+                    <div class="card mb-4">
+                        {% for executor in executor_order_data %}
+                        <input type="hidden" value="{{executor.id}}" hidden id="executorOrderId"
+                               class="executor-order-id" data-executor-id="{{executor.id}}">
+                        <input type="hidden" value="{{order.order_num}}" hidden id="executorOrderNum"
+                               class="executor-order-num" data-executor-id="{{executor.id}}">
+                        <div class="card-body">
+                            <div class="mb-3 d-flex">
+                                <h3 class="h6 mb-4">Информация по исполнителям</h3>
+                                <button type="button" class="btn btn-warning ml-5 update-executor-btn"
+                                        id="updateExecutorBtn"
+                                        data-executor-id="{{executor.id}}">Изменить
+                                </button>
+                                <button type="button" class="btn btn-success ml-5 send-update-executor-btn"
+                                        id="sendUpdateExecutorBtn"
+                                        data-executor-id="{{executor.id}}">Сохранить
+                                </button>
+                                <form action="/performers/del/executor-from-order/" method="post">
+                                    <input type="text" value="{{executor.id}}" name="executor_orders_id" hidden>
+                                    <input type="text" value="{{order.order_num}}" name="order_page_num" hidden>
+                                    <button type="submit" class="btn btn-danger ml-5" id="DeleteExecutorBtn">Удалить
+                                    </button>
+                                </form>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Описание заявки</label>
+                                <input type="text" class="form-control executor-name-input"
+                                       value="{{executor.order_name}}" name="order_name" disabled
+                                       id="executorNameInput" data-executor-id="{{executor.id}}">
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-3">
+                                    <div class="mb-3">
+                                        <label class="form-label">Исполнитель</label>
+                                        <select class="form-select" disabled="">
+                                            <option value="{{executor.executor.id}}">{{executor.executor.name}}</option>
+                                            {% for executor in executors %}
+                                            <option value="{{ executor.id }}">{{ executor.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="mb-3">
+                                        <label class="form-label">Направление</label>
+                                        <select class="form-select" disabled="">
+                                            <option value="{{executor.service.id}}">{{executor.service.name}}</option>
+                                            {% for service in services %}
+                                            <option value="{{ service.id }}">{{ service.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="mb-3">
+                                        <label class="form-label">Дата создания</label>
+                                        <select class="form-select" disabled="">
+                                            <option value="{{executor.order_date_create}}">
+                                                {{executor.order_date_create}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="mb-3">
+                                        <label class="form-label">Дата закрытия</label>
+                                        <select class="form-select" disabled="">
+                                            <option value="{{executor.order_date_close}}">
+                                                {{executor.order_date_close}}
+                                            </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-3">
+                                    <div class="mb-3">
+                                        <label class="form-label">Сумма оплаты</label>
+                                        <input type="text" class="form-control executor-sum-input"
+                                               value="{{executor.order_sum}}"
+                                               disabled="" id="executorSumInput" data-executor-id="{{executor.id}}">
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="mb-3">
+                                        <label class="form-label">ПС оплаты</label>
+                                        <select class="form-select executor-pays-select" disabled=""
+                                                id="executorPaysSelect" data-executor-id="{{executor.id}}">
+                                            <option value="{{executor.pays.id}}">{{executor.pays.name}}</option>
+                                            {% for paymethod in paysmethods %}
+                                            <option value="{{ paymethod.id }}">{{ paymethod.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="mb-3">
+                                        <label class="form-label">Отправка оплаты</label>
+                                        <select class="form-select executor-send-pay-select" disabled=""
+                                                id="executorSendPaySelect" data-executor-id="{{executor.id}}">
+                                            <option value="{{executor.order_send_pay}}">{{executor.order_send_pay}}
+                                            </option>
+                                            <option value="true">Да</option>
+                                            <option value="false">Нет</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-3">
+                                    <div class="mb-3">
+                                        <label class="form-label">Статус заказа</label>
+                                        <select class="form-select executor-status-select" disabled
+                                                id="executorStatusSelect" data-executor-id="{{executor.id}}">
+                                            <option value="{{executor.status.id}}">{{executor.status.name}}</option>
+                                            {% for status in statuses %}
+                                            <option value="{{status.id}}">{{status.name}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <!-- Add Executor -->
+                    <button type="button" class="btn btn-primary" id="addExecutorBtn">Добавить исполнителя</button>
+                    <div id="tableContainer" style="display: none;" class="mt-10">
+                        <form action="/performers/new_exec" method="post">
+                            <div class="mb-3">
+                                <label class="form-label">Описание заявки</label>
+                                <input type="text" id="orderExecutorNameInput" class="form-control"
+                                       value="" name="order_name">
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <div class="mb-3 mt-10">
+                                        <label class="form-label">Имя исполнителя</label>
+                                        <select class="form-select" name="order_executor">
+                                            <option value=""></option>
+                                            {% for executor in executors %}
+                                            <option value="{{executor.id}}">{{executor.name}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="mb-3">
+                                        <label class="form-label">Направление заявки</label>
+                                        <select class="form-select" name="order_service">
+                                            <option value=""></option>
+                                            {% for service in services %}
+                                            <option value="{{service.id}}">{{service.name}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="mb-3">
+                                        <label class="form-label">Статус заявки</label>
+                                        <select class="form-select" name="order_status">
+                                            {% for status in statuses %}
+                                            <option value="{{status.id}}">{{status.name}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <div class="mb-3">
+                                        <label class="form-label">Отметка отправки оплаты</label>
+                                        <select class="form-select" name="order_send_pay">
+                                            <option value="true">Да</option>
+                                            <option value="false">Нет</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="mb-3">
+                                        <label class="form-label">Выбор ПС для отправки</label>
+                                        <select class="form-select" name="order_pay_method">
+                                            <option value=""></option>
+                                            {% for paymethod in paysmethods %}
+                                            <option value="{{paymethod.id}}">{{paymethod.name}}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-4">
+                                    <div class="mb-3">
+                                        <label class="form-label">Сумма заявки</label>
+                                        <input type="text" class="form-control" name="order_sum"
+                                               placeholder="Ведите сумму отправки исполнителю">
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Остальные поля - не видимые-->
+                            <input type="hidden" name="order_num" value="{{ order.id }}" id="orderIdSelect">
+                            <input type="hidden" name="order_page_num" value="{{ order.order_num }}"
+                                   id="orderPageNum">
+                            <button type="submit" class="btn btn-success mt-3">Сохранить</button>
+                        </form>
+                    </div>
+                </div>
+                <!-- Right side -->
+                <div class="col-lg-4">
+                    <!-- Status -->
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h3 class="h6">Статус заказа заявки</h3>
+                            <select class="form-select" id="orderStatusSelect">
+                                <option value="{{order.status.id}}">{{order.status.name}}</option>
+                                {% for status in statuses %}
+                                <option value="{{status.id}}">{{status.name}}</option>
+                                {% endfor %}
+                            </select>
+                            <hr>
+                            <h3 class="h6">Получение оплаты</h3>
+                            <select class="form-select" id="orderGetPaySelect">
+                                <option value="{{order.order_get_pay}}">{{order.order_get_pay}}</option>
+                                <option value="true">Да</option>
+                                <option value="false">Нет</option>
+                            </select>
+                        </div>
+                    </div>
+                    <!-- Avatar -->
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h3 class="h6"><b>Информация по созданию заказа</b></h3>
+                            <label class="form-label">Создатель заказа</label>
+                            <input type="text" class="form-control" value="{{order.user.name}}" disabled>
+                            <hr>
+                            <label class="form-label">Дата создания заказа</label>
+                            <input type="text" class="form-control" value="{{order.order_date_create}}" disabled>
+                            <hr>
+                            <label class="form-label">Дата завершения заказа</label>
+                            <input type="text" class="form-control" value="{{order.order_date_close}}" disabled>
+                        </div>
+                    </div>
+                    <!-- Notes -->
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h3 class="h6">Notes</h3>
+                            <textarea class="form-control" rows="3"></textarea>
+                        </div>
+                    </div>
+                    <!-- Notification settings -->
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h3 class="h6">Notification Settings</h3>
+                            <ul class="list-group list-group-flush mx-n2">
+                                <li class="list-group-item px-0 d-flex justify-content-between align-items-start">
+                                    <div class="ms-2 me-auto">
+                                        <h6 class="mb-0">News and updates</h6>
+                                        <small>News about product and feature updates.</small>
+                                    </div>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" role="switch">
+                                    </div>
+                                </li>
+                                <li class="list-group-item px-0 d-flex justify-content-between align-items-start">
+                                    <div class="ms-2 me-auto">
+                                        <h6 class="mb-0">Tips and tutorials</h6>
+                                        <small>Tips on getting more out of the platform.</small>
+                                    </div>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" role="switch" checked="">
+                                    </div>
+                                </li>
+                                <li class="list-group-item px-0 d-flex justify-content-between align-items-start">
+                                    <div class="ms-2 me-auto">
+                                        <h6 class="mb-0">User Research</h6>
+                                        <small>Get involved in our beta testing program.</small>
+                                    </div>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" role="switch">
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    </div>
+    {% endfor %}
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="{{ url_for('static', path='js/order_num.js')  }}"></script>
+<script src="{{ url_for('static', path='js/add_executor.js')  }}"></script>
+{% endblock %}
+
