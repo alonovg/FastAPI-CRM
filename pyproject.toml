@@ -1,0 +1,32 @@
+[tool.poetry]
+name = "crm-system"
+version = "0.1.0"
+description = ""
+authors = ["Smaeryy <grazylon@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+fastapi = {extras = ["all"], version = "^0.103.1"}
+sqlalchemy = "^2.0.21"
+alembic = "^1.12.0"
+sqladmin = "^0.15.0"
+asyncpg = "^0.28.0"
+python-jose = "^3.3.0"
+passlib = "^1.7.4"
+requests = "^2.31.0"
+bcrypt = "^4.0.1"
+fastapi-cache2 = {extras = ["redis"], version = "^0.2.1"}
+celery = "^5.3.4"
+flower = "^2.0.1"
+
+[tool.poetry.dev-dependencies]
+pylint = "^2.17.5"
+pytest = "^7.4.2"
+pytest-asyncio = "^0.21.1"
+httpx = "^0.25.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
