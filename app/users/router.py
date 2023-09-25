@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Response, Depends
 
-from app.exceptions import UserAlreadyExistsException, CannotAddDataToDatabase, IncorrectEmailOrPasswordException
+from app.exceptions import UserAlreadyExistsException, CannotAddDataToDatabase, IncorrectEmailOrPasswordException, \
+    UserIsNotPresentException
 from app.users.auth import get_password_hash, authenticate_user, create_access_token
 from app.users.dao import UserDAO
 from app.users.dependencies import get_current_user
@@ -46,3 +47,11 @@ def logout_user(response: Response):
 @router.get("/me")
 async def read_users_me(current_user: Users = Depends(get_current_user)):
     return current_user
+
+
+@router.get("/user/{id}")
+async def read_users_by_id(user_id: int):
+    user = await UserDAO.find_one_or_none(id=user_id)
+    if not user:
+        raise UserIsNotPresentException
+    return user.name

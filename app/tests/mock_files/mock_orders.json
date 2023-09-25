@@ -1,0 +1,57 @@
+[
+    {
+        "order_num": 101,
+        "order_creator": 2,
+        "order_name": "Облицовочные работы",
+        "order_date_create": "2023-06-30",
+        "order_client": 1,
+        "order_get_pay": true,
+        "order_pay_method": 1,
+        "order_sum": 21582,
+        "order_status": 1
+    },
+    {
+        "order_num": 102,
+        "order_creator": 1,
+        "order_name": "Построить забор",
+        "order_date_create": "2023-02-10",
+        "order_client": 2,
+        "order_get_pay": true,
+        "order_pay_method": 2,
+        "order_sum": 72390,
+        "order_status": 2
+    },
+    {
+        "order_num": 103,
+        "order_creator": 1,
+        "order_name": "Построить баню",
+        "order_date_create": "2023-04-15",
+        "order_client": 3,
+        "order_get_pay": false,
+        "order_pay_method": 3,
+        "order_sum": 358280,
+        "order_status": 3
+    },
+    {
+        "order_num": 104,
+        "order_creator": 2,
+        "order_name": "Сделать пристрой к дому",
+        "order_date_create": "2023-08-23",
+        "order_client": 4,
+        "order_get_pay": true,
+        "order_pay_method": 4,
+        "order_sum": 129070,
+        "order_status": 4
+    },
+    {
+        "order_num": 105,
+        "order_creator": 2,
+        "order_name": "Построить гараж",
+        "order_date_create": "2023-05-02",
+        "order_client": 5,
+        "order_get_pay": true,
+        "order_pay_method": 5,
+        "order_sum": 268300,
+        "order_status": 5
+    }
+]

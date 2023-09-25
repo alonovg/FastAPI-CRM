@@ -4,6 +4,7 @@ from fastapi import APIRouter, Form
 from fastapi_cache.decorator import cache
 
 from app.clients.dao import ClientDAO
+from app.clients.schemas import SClientDelete, SClientNew
 from app.exceptions import UserAlreadyExistsException, CannotFindClient
 from app.orders.dao import OrderDAO
 
@@ -15,27 +16,29 @@ router = APIRouter(
 
 
 @router.post("/add_client", status_code=201)
-async def add_client(username: Annotated[str, Form()]):
+# async def add_client(username: Annotated[str, Form()]):
+async def add_client(client_data: SClientNew):
     """Добавляет клиента в базу данных"""
-    find_client = await ClientDAO.find_one_or_none(username=username)
+    find_client = await ClientDAO.find_one_or_none(username=client_data.username)
     if find_client:
         raise UserAlreadyExistsException
-    result = await ClientDAO.add(username=username)
+    result = await ClientDAO.add(username=client_data.username)
     return {"message": "Client created successfully",
             "id": result.id}
 
 
-@router.post("/del_client", status_code=201)
-async def del_client(client_id: Annotated[int, Form()]):
+@router.post("/del_client", status_code=200)
+# async def del_client(client_id: Annotated[int, Form()]):
+async def del_client(client: SClientDelete):
     """Удаляет клиента из базы данных"""
-    find_client = await ClientDAO.find_one_or_none(id=client_id)
+    find_client = await ClientDAO.find_one_or_none(id=client.id)
     if not find_client:
         raise CannotFindClient
-    await ClientDAO.delete(id=client_id)
+    await ClientDAO.delete(id=client.id)
     return {"message": "Client deleted successfully"}
 
 
-@router.post("/update_client", status_code=201)  # patch
+@router.post("/update_client", status_code=200)  # patch
 async def update_client(client_id: Annotated[int, Form()], new_username: Annotated[str, Form()]):
     """Обновляет клиента из базы данных"""
     find_client = await ClientDAO.find_one_or_none(id=client_id)
@@ -46,7 +49,7 @@ async def update_client(client_id: Annotated[int, Form()], new_username: Annotat
 
 
 @router.get("/get_all_clients")
-@cache(expire=60)
+# @cache(expire=60)
 async def get_clients():
     """Получает список всех клиентов - Кэшируется в Redis на 60 секунд."""
     return await ClientDAO.find_all()

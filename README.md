@@ -12,6 +12,7 @@
 - Кэширование с помощью Redis
 - Фоновые задачи с Celery
 - Просмотр очередей через Flower
+- Тестирование с помощью PyTest (Unit/Integration)
 
 ## Usage:
 - Alembic generate version:
@@ -24,7 +25,7 @@
 
 ## Environment Variables
 
-To run this project, you will need to add the following environment variables to config.py file
+To run this project, you will need to add the following environment variables to .env file
 
 Для подключения к БД:
 - `DB_HOST`

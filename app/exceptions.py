@@ -27,7 +27,7 @@ class CannotUpdateDataToDatabase(CrmException):
 
 class IncorrectEmailOrPasswordException(CrmException):
     status_code = status.HTTP_401_UNAUTHORIZED
-    detail = "Неверная почта или пароль"
+    detail = "Неверное имя или пароль"
 
 
 class TokenAbsentException(CrmException):
