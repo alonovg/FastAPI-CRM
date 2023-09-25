@@ -26,6 +26,19 @@
 - Celery: ``celery -A app.tasks.celery_task:celery worker --loglevel=INFO --pool=solo``
 - Flower: ``celery -A app.tasks.celery_task:celery flower``
 
+## Docker build:
+``docker compose build``
+``docker compose up``
+
+## Links:
+- Host: ``/localhost:9000``
+- Swagger: ``/docs``
+- ReDoc: ``/redoc``
+- Flower: ``/localhost:5555``
+- Prometheus: ``/localhost:9090``
+- Grafana: ``/localhost:3000``
+
+
 ## Environment Variables
 
 To run this project, you will need to add the following environment variables to .env file
