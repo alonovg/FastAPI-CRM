@@ -219,4 +219,5 @@ cython_debug/
 
 # Custom ignore
 redis/
+.env-non-dev
 

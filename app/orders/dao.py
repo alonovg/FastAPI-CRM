@@ -2,12 +2,14 @@ from datetime import date
 
 from sqlalchemy import func, select, update
 from sqlalchemy.orm import joinedload
+from sqlalchemy.exc import SQLAlchemyError
 
 from app.dao.base import BaseDAO
 from app.exceptions import CannotUpdateDataToDatabase
 from app.orders.models import Orders
 from app.database import async_session_maker
 from app.performers.orders.dao import ExecutorOrderDAO
+from app.logger import logger
 
 
 class OrderDAO(BaseDAO):
@@ -47,37 +49,45 @@ class OrderDAO(BaseDAO):
     @classmethod
     async def update_order_info(cls, order_id, values):
         async with async_session_maker() as session:
-            update_query = (
-                update(cls.model)
-                .where(cls.model.id == order_id)
-                .values(**values)
-            )
-            result_update_main_info = await session.execute(update_query)
-
-            if not result_update_main_info:
-                raise CannotUpdateDataToDatabase
-            await session.commit()
-
-            if "order_status" in values and values["order_status"] in [3, 4, 5]:
-                new_status = values["order_status"]
+            try:
                 update_query = (
                     update(cls.model)
                     .where(cls.model.id == order_id)
-                    .values(order_status=int(new_status),
-                            order_date_close=date.today())
+                    .values(**values)
                 )
-                await session.execute(update_query)
+                result_update_main_info = await session.execute(update_query)
+
+                if not result_update_main_info:
+                    raise CannotUpdateDataToDatabase
                 await session.commit()
-            elif "order_status" in values and values["order_status"] not in [3, 4, 5]:
-                new_status = values["order_status"]
-                update_query = (
-                    update(cls.model)
-                    .where(cls.model.id == order_id)
-                    .values(order_status=int(new_status),
-                            order_date_close=None)
-                )
-                await session.execute(update_query)
-                await session.commit()
+
+                if "order_status" in values and values["order_status"] in [3, 4, 5]:
+                    new_status = values["order_status"]
+                    update_query = (
+                        update(cls.model)
+                        .where(cls.model.id == order_id)
+                        .values(order_status=int(new_status),
+                                order_date_close=date.today())
+                    )
+                    await session.execute(update_query)
+                    await session.commit()
+                elif "order_status" in values and values["order_status"] not in [3, 4, 5]:
+                    new_status = values["order_status"]
+                    update_query = (
+                        update(cls.model)
+                        .where(cls.model.id == order_id)
+                        .values(order_status=int(new_status),
+                                order_date_close=None)
+                    )
+                    await session.execute(update_query)
+                    await session.commit()
+            except (SQLAlchemyError, Exception) as e:
+                if isinstance(e, SQLAlchemyError):
+                    msg = "DataBase Exc"
+                elif isinstance(e, Exception):
+                    msg = "Unknown Exc"
+                msg += ": Cannot update data to database"
+                logger.error(msg, extra=values, exc_info=True)
 
     @classmethod
     async def set_new_profit(cls, order_id):

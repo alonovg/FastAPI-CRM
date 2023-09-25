@@ -13,6 +13,9 @@
 - Фоновые задачи с Celery
 - Просмотр очередей через Flower
 - Тестирование с помощью PyTest (Unit/Integration)
+- Логирование с помощью Sentry
+- Сбор метрик с Prometheus
+- Мониторинг с Grafana
 
 ## Usage:
 - Alembic generate version:
