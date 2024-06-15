@@ -22,7 +22,7 @@ flower = "^2.0.1"
 python-json-logger = "^2.0.7"
 sentry-sdk = {extras = ["fastapi"], version = "^1.31.0"}
 prometheus-fastapi-instrumentator = "^6.1.0"
-gunicorn = "^21.2.0"
+gunicorn = "^22.0.0"
 
 [tool.poetry.dev-dependencies]
 pylint = "^2.17.5"
